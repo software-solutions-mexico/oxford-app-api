@@ -6,5 +6,4 @@ json.data do
         :email
     )
   end
-  json.token token
 end
