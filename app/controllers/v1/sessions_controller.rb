@@ -13,7 +13,7 @@ class V1::SessionsController < ApplicationController
     if @user&.valid_password?(params[:password])
       jwt = JWT.encode(
           { user_id: @user.id, exp: (Time.now + 2.weeks).to_i, email: @user.email },
-          Rails.application.secrets.secret_key_base,
+          ENV["SECRET_KEY_BASE"],
           'HS256'
       )
 
