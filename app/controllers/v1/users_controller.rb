@@ -9,21 +9,14 @@ module V1
       if @user.save
         render :create
       else
-        head(:unprocessable_entitty)
+        render json: { errors: @user.errors.full_messages }, status: :unauthorized
       end
     end
 
     private
 
     def user_params
-      params.require(:user).permit(:email, :password, :password_confirmation)
+      params.require(:user).permit(:email, :password, :password_confirmation, :name, :role, :family_key)
     end
-
-    def find_user
-      @user = User.find_by_email!(params[:_email])
-    rescue ActiveRecord::RecordNotFound
-      render json: { errors: 'User not found' }, status: :not_found
-    end
-
   end
 end

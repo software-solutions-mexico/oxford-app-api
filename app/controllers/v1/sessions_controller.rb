@@ -2,9 +2,12 @@ class V1::SessionsController < ApplicationController
   before_action :authorize_request, except: :create
 
   def show
-    @user = current_user
-
-    current_user ? head(:ok) : head(:unauthorized)
+    @user = User.find(params[:id])
+    if @user && show_user?
+      render :show , status: :ok
+    else
+      head(:unauthorized)
+    end
   end
 
   def create
@@ -23,7 +26,6 @@ class V1::SessionsController < ApplicationController
     end
   end
 
-
   def destroy
     current_user&.authentication_token = nil
     if current_user&.save
@@ -32,4 +34,11 @@ class V1::SessionsController < ApplicationController
       head(:unauthorized)
     end
   end
+
+  private
+
+  def show_user?
+    current_user.is_admin? || @user&.id == current_user.id
+  end
+
 end
