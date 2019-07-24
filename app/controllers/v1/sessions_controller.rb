@@ -22,16 +22,16 @@ class V1::SessionsController < ApplicationController
 
       render :create, locals: { token: jwt }, status: :ok
     else
-      head(:unauthorized)
+      render json: @user.errors
     end
   end
 
   def destroy
     current_user&.authentication_token = nil
     if current_user&.save
-      head(:ok)
+      head :ok
     else
-      head(:unauthorized)
+      head :unauthorized
     end
   end
 

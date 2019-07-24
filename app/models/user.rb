@@ -35,7 +35,7 @@
       if Kid.where(family_key: self.family_key)&.any?
         family_added = false
         Kid.where(family_key: self.family_key)&.each do |kid|
-          if !kid.parents.find(self)&.any?
+          if !kid.users.where(id: self.id)&.any?
             self.kids << kid
             family_added = true
           end
