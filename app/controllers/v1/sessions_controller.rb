@@ -22,7 +22,7 @@ class V1::SessionsController < ApplicationController
 
       render :create, locals: { token: jwt }, status: :ok
     else
-      render json: @user.errors
+      head :unauthorized
     end
   end
 
