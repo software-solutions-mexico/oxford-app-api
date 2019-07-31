@@ -33,14 +33,14 @@
 
     def family_validation
       if Kid.where(family_key: self.family_key)&.any?
-        family_added = false
         Kid.where(family_key: self.family_key)&.each do |kid|
-          if !kid.users.where(id: self.id)&.any?
+          family_added = false
+          if kid.users&.where(id: self)&.empty?
             self.kids << kid
             family_added = true
           end
+          kid.save if family_added
         end
-        self.save if family_added
       else
         errors.add('Family', 'key not found')
         throw(:abort)
