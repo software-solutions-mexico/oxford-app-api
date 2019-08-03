@@ -27,6 +27,15 @@ module V1
       end
     end
 
+    def show_by_family_key
+      @kids = Kid.where(family_key: params[:family_key])
+      if @kids && show_kid?
+        render json: @kids.order(name: :asc)
+      else
+        head(:unauthorized)
+      end
+    end
+
     def update
       @kid = Kid.find(params[:id])
       if current_user.is_admin?
@@ -44,7 +53,7 @@ module V1
     private
 
     def kid_params
-      params.require(:kid).permit(:name, :grade, :group, :family_key)
+      params.require(:kid).permit(:name, :grade, :group, :family_key, :campus)
     end
 
     def permission

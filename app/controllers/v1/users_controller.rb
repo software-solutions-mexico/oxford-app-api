@@ -13,7 +13,7 @@ module V1
       if @user.save
         render :create
       else
-        render json: { errors: @user.errors.full_messages }, status: :unauthorized
+        render json: { errors: @user&.errors.full_messages }, status: :unauthorized
       end
     end
 
