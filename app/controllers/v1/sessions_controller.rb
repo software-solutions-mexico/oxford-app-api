@@ -20,6 +20,12 @@ class V1::SessionsController < ApplicationController
           'HS256'
       )
 
+      if @user&.is_parent?
+        if params[:family_key] != @user&.family_key
+          return render json: { errors: 'Family key not found' }, status: :unauthorized
+        end
+      end
+
       render :create, locals: { token: jwt }, status: :ok
     else
       render json: { errors: @user ? 'Password not valid' : 'Email not valid' }, status: :unauthorized

@@ -61,7 +61,7 @@ module V1
     end
 
     def show_kid?
-      current_user.is_admin? || current_user.kids(where: @kid.id).any?
+      current_user.is_admin? || current_user.kids.where(id: @kids).any?
     end
   end
 end
