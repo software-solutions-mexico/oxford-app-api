@@ -1,5 +1,5 @@
   class User < ApplicationRecord
-    ROLES = ["admin", "parent"]
+    ROLES = ["ADMIN", "PARENT"]
 
     acts_as_token_authenticatable
     # Include default devise modules. Others available are:
@@ -11,17 +11,23 @@
     validates :family_key, presence: true, if: -> { is_parent? }
     validate :role_validation
     validate :family_validation, if: -> { is_parent? }
-
+    before_save :normalize_date
 
 
     has_and_belongs_to_many :kids
 
+    def normalize_date
+      self.name&.upcase!
+      self.relationship&.upcase!
+      self.relationship == ["PADRE", "MADRE", "PARENT"] ? self.role = "PARENT" : self.role = "ADMIN"
+    end
+
     def is_admin?
-      self.role == 'admin'
+      self.role == 'ADMIN'
     end
 
     def is_parent?
-      self.role == 'parent'
+      self.role == 'PARENT'
     end
 
     def role_validation

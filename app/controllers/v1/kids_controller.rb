@@ -57,7 +57,7 @@ module V1
     end
 
     def permission
-      head :unauthorized if current_user&.role != 'admin'
+      head :unauthorized if current_user&.role != 'ADMIN'
     end
 
     def show_kid?
