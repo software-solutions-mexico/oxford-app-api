@@ -18,6 +18,45 @@ module V1
       end
     end
 
+    def import_data_from_excel
+      workbook = Roo::Excel.new(params[:file].path, file_warning: :ignore)
+      workbook.default_sheet = workbook.sheets[0]
+      headers = Hash.new
+      workbook.row(1).each_with_index {|header,i|
+        headers[header] = i
+      }
+
+      @kids_created = 0
+      @kids_not_created = 0
+      ((workbook.first_row + 1)..workbook.last_row).each do |row|
+        family_key = workbook.row(row)[headers['clafamilia']].to_i.to_s
+        student_id = workbook.row(row)[headers['matricula']].to_s.strip
+        full_name = workbook.row(row)[headers['Alumno']].strip
+        father_last_name = workbook.row(row)[headers['appaterno']].strip
+        mother_last_name = workbook.row(row)[headers['apmaterno']].strip
+        name = workbook.row(row)[headers['nombre']].strip
+        campus = workbook.row(row)[headers['Campus']].strip
+        grade = workbook.row(row)[headers['Grado']].to_s.strip
+        group = workbook.row(row)[headers['Grupo']].to_s.strip
+
+        if Kid.where(student_id: student_id, family_key: family_key).any?
+          @kids_not_created += 1
+        else
+          kid = Kid.new(family_key: family_key, student_id: student_id, full_name: full_name,
+          father_last_name: father_last_name, mother_last_name: mother_last_name, name: name,
+                  campus: campus, grade: grade, group: group)
+          if kid.save
+            @kids_created += 1
+          else
+            @kids_not_created += 1
+          end
+        end
+
+      end
+
+      render :create_from_excel
+    end
+
     def show
       @kid = Kid.find(params[:id])
       if @kid && show_kid?
@@ -53,7 +92,7 @@ module V1
     private
 
     def kid_params
-      params.require(:kid).permit(:name, :grade, :group, :family_key, :campus)
+      params.require(:kid).permit(:full_name, :name, :father_last_name, :mother_last_name, :grade, :group, :family_key, :campus, :student_id)
     end
 
     def permission
