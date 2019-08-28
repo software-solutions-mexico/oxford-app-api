@@ -17,6 +17,40 @@ module V1
       end
     end
 
+    def import_data_from_excel
+      workbook = Roo::Excel.new(params[:file].path, file_warning: :ignore)
+      workbook.default_sheet = workbook.sheets[0]
+      headers = Hash.new
+      workbook.row(1).each_with_index {|header,i|
+        headers[header] = i
+      }
+
+      @users_created = 0
+      @users_not_created = 0
+      ((workbook.first_row + 1)..workbook.last_row).each do |row|
+        family_key = workbook.row(row)[headers['clafamilia']].to_i.to_s
+        name = workbook.row(row)[headers['Nombre']].strip
+        relationship = workbook.row(row)[headers['Parentesco']].strip
+        email = workbook.row(row)[headers['eMail']].strip
+        password = workbook.row(row)[headers['password']]
+        role = 'PARENT'
+        if User.where(email: email).any?
+          @users_not_created += 1
+        else
+          user = User.new(family_key: family_key, name: name, relationship: relationship, password: password, role: role)
+          if user.save!
+            @users_created += 1
+          else
+            @users_not_created += 1
+          end
+        end
+
+      end
+
+      render :create_from_excel
+    end
+
+
     def update
       @user = User.find(params[:id])
       if current_user.is_admin? || @user&.id == current_user.id
