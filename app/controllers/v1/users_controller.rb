@@ -37,8 +37,10 @@ module V1
         if User.where(email: email).any?
           @users_not_created += 1
         else
-          user = User.new(family_key: family_key, name: name, relationship: relationship, password: password, role: role)
-          if user.save!
+          user = User.new(email: email, password: password, password: password,
+                          password_confirmation: password, name: name, role: role,
+                          relationship: relationship, family_key: family_key)
+          if user.save
             @users_created += 1
           else
             @users_not_created += 1
