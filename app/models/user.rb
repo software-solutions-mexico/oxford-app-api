@@ -15,6 +15,7 @@
 
 
     has_and_belongs_to_many :kids
+    has_many :notifications
 
     def normalize_date
       self.name&.upcase!

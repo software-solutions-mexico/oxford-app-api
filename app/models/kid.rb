@@ -31,4 +31,10 @@ class Kid < ApplicationRecord
     end
   end
 
+  scope :by_campuses, -> (campuses) { where(campus: campuses) }
+  scope :by_grades, -> (grades) { where(grade: grades) }
+  scope :by_groups, -> (groups) { where(campus: groups) }
+  scope :by_family_keys, -> (family_keys) { where(family_key: family_keys) }
+  scope :by_student_names, -> (student_names) { where(name: student_names) }
+
 end

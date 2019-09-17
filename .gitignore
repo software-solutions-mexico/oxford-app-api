@@ -42,3 +42,17 @@
 \.generators
 
 \.idea/inspectionProfiles/Project_Default\.xml
+
+.idea/dataSources.ids
+
+.idea/dataSources.local.xml
+
+.idea/dataSources.xml
+
+.idea/runConfigurations/Development__oxford_app_api.xml
+
+.idea/runConfigurations/Production__oxford_app_api.xml
+
+.idea/runConfigurations/spec__oxford_app_api.xml
+
+.idea/runConfigurations/test__oxford_app_api.xml

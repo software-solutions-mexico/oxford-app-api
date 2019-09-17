@@ -1,0 +1,1 @@
+json.notifications_sent_succesfully @notifications_created
