@@ -53,4 +53,8 @@
         throw(:abort)
       end
     end
+
+    def notifications
+      super.where("publication_date > ?", .today)
+    endDate
   end
