@@ -31,8 +31,8 @@ ActiveRecord::Schema.define(version: 2019_09_21_214345) do
     t.string "grade"
     t.string "group"
     t.string "family_key"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "campus"
     t.string "father_last_name"
     t.string "mother_last_name"
@@ -49,7 +49,7 @@ ActiveRecord::Schema.define(version: 2019_09_21_214345) do
   create_table "notifications", force: :cascade do |t|
     t.string "title", null: false
     t.string "description"
-    t.datetime "publication_date", default: "2019-09-15 00:01:56", null: false
+    t.datetime "publication_date", default: "2019-09-21 22:31:12", null: false
     t.string "role"
     t.string "relationship"
     t.string "campus"
@@ -139,10 +139,10 @@ ActiveRecord::Schema.define(version: 2019_09_21_214345) do
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
     t.string "reset_password_token"
-    t.datetime "reset_password_sent_at", precision: 6
-    t.datetime "remember_created_at", precision: 6
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.string "authentication_token", limit: 30
     t.string "name"
     t.string "role"
