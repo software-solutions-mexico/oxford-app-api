@@ -69,15 +69,18 @@ module V1
       # Create notifications on db
       @notifications_created = 0
       users&.each do |user|
-        notification = Notification.new(category: category, title: title, description: description, campus: user.kids.first.campus,
+        notification = Notification.new(category: category, title: title, description: description, campus: user.kids&.first&.campus,
                                       event_id: event_id, publication_date: publication_date, role: user.role,
-                                      grade: grades.join(','), group: groups.join(','), family_key: user.family_key)
-        user.notifications << notification
+                                      grade: grades.join(','), group: groups.join(','), family_key: user.family_key, user: user)
         @notifications_created += 1 if notification.save!
       end
 
       if @notifications_created.positive?
-        # notify(users, core_notification)
+        begin
+          notify(users, core_notification)
+        rescue
+
+        end
         render :create
       else
         render json: { errors: Notification&.errors.full_messages }, status: :unauthorized
