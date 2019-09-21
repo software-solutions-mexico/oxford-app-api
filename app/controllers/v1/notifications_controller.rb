@@ -83,7 +83,7 @@ module V1
         end
         render :create
       else
-        render json: { errors: Notification&.errors.full_messages }, status: :unauthorized
+        render json: { errors: 'Users not found for notification delivery'}, status: :partial_content
       end
     end
 
