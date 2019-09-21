@@ -29,7 +29,7 @@ module V1
       errors << 'Titulo obligatorio' if title.blank?
       errors << 'Descripcion obligatoria' if description.blank?
 
-      if publication_date.blank? || publication_date < DateTime.now
+      if publication_date.blank? || publication_date < Time.now.to_date
         errors << 'Fecha vacio o anterior a hoy'
       end
 
