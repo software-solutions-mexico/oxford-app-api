@@ -37,6 +37,9 @@ gem 'rack-cors'
 # For handle environment secret variables
 gem "figaro"
 
+#Push notifications handler
+gem 'rpush'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]

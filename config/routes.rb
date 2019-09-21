@@ -6,6 +6,7 @@ Rails.application.routes.draw do
     resources :sessions, only: [:create, :show, :destroy]
     resources :users, only:[:index, :create, :update]
     resources :kids, only:[:index, :create, :show, :update]
+    resources :devices
     get 'kids/by_family_key/:family_key', to: 'kids#show_by_family_key'
     get 'all_family_keys', to: 'kids#all_family_keys'
     post 'kids/create_kids_from_xls', to: 'kids#import_data_from_excel'

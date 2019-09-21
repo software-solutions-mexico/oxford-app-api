@@ -33,6 +33,8 @@ module V1
         errors << 'Fecha vacio o anterior a hoy'
       end
 
+      core_notification = Notification.new(title: title, description: description, publication_date: publication_date)
+
       return render json: { errors: errors }, status: :unauthorized if errors.any?
       
       users = []
@@ -64,8 +66,7 @@ module V1
         end
       end
 
-
-
+      # Create notifications on db
       @notifications_created = 0
       users&.each do |user|
         notification = Notification.new(category: category, title: title, description: description, campus: user.kids.first.campus,
@@ -76,6 +77,7 @@ module V1
       end
 
       if @notifications_created.positive?
+        # notify(users, core_notification)
         render :create
       else
         render json: { errors: Notification&.errors.full_messages }, status: :unauthorized
@@ -105,6 +107,39 @@ module V1
       @seen_notifications = notifications.where(seen: true)&.count || 0
       @not_seen_notifications = (notifications&.count || 0) - @seen_notifications
       render 'counters'
+    end
+
+    def notify(users, notification)
+
+      devices = []
+      users.each do |user|
+        devices << user.devices
+      end
+
+      if devices.count.positive?
+        #get all devices registered in our db and loop through each of them
+        devices.each do |device|
+          n = Rpush::Gcm::Notification.new
+          # use the pushme_droid app we previously registered in our initializer file to send the notification
+          n.app = Rpush::Gcm::App.find_by_name("pushme_droid")
+          n.registration_ids = [device.token]
+
+          # parameter for the notification
+          n.notification = {
+              body: notification.description,
+              title: notification.title,
+              sound: 'default'
+          }
+          #save notification entry in the db
+          n.save!
+        end
+
+        # send all notifications stored in db
+        Rpush.push
+      end
+
+
+      render json: {sent: true}, status: :ok
     end
 
     private
