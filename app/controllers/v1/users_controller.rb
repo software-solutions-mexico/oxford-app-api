@@ -69,7 +69,7 @@ module V1
     private
 
     def user_params
-      params.require(:user).permit(:email, :password, :password_confirmation, :name, :role, :relationship, :family_key)
+      params.require(:user).permit(:email, :password, :password_confirmation, :name, :role, :relationship, :family_key, :admin_campus)
     end
   end
 end

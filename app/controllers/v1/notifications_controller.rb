@@ -26,25 +26,45 @@ module V1
 
       errors = []
       errors << 'Categoria obligatoria' if category.blank?
-      errors << 'Categoria obligatoria' if title.blank?
-      errors << 'Categoria obligatoria' if description.blank?
+      errors << 'Titulo obligatorio' if title.blank?
+      errors << 'Descripcion obligatoria' if description.blank?
 
       if publication_date.blank? || publication_date < DateTime.now
         errors << 'Fecha vacio o anterior a hoy'
       end
 
       return render json: { errors: errors }, status: :unauthorized if errors.any?
-
-      kids = Kid.all
-      kids = kids.by_campuses(campuses) if campuses.present?
-      kids = kids.by_grades(grades) if grades.present?
-      kids = kids.by_groups(groups) if groups.present?
-      kids = kids.by_family_keys(family_keys) if family_keys.present?
-      kids = kids.by_student_names(student_names) if student_names.present?
+      
       users = []
-      kids&.each do |kid|
-        kid.users.each { |user| users << user }
+
+      if role == 'ADMIN'
+        users = User.where(role: 'ADMIN')
+        users = users.by_admin_campus(campuses) if campuses.present?
+      elsif role == 'PARENT'
+        kids = Kid.all
+        kids = kids.by_campuses(campuses) if campuses.present?
+        kids = kids.by_grades(grades) if grades.present?
+        kids = kids.by_groups(groups) if groups.present?
+        kids = kids.by_family_keys(family_keys) if family_keys.present?
+        kids = kids.by_student_names(student_names) if student_names.present?
+        kids&.each do |kid|
+          kid.users.each { |user| users << user }
+        end
+      else
+        users = User.all
+        users = users.by_admin_campus(campuses) if campuses.present?
+        kids = Kid.all
+        kids = kids.by_campuses(campuses) if campuses.present?
+        kids = kids.by_grades(grades) if grades.present?
+        kids = kids.by_groups(groups) if groups.present?
+        kids = kids.by_family_keys(family_keys) if family_keys.present?
+        kids = kids.by_student_names(student_names) if student_names.present?
+        kids&.each do |kid|
+          kid.users.each { |user| users << user }
+        end
       end
+
+
 
       @notifications_created = 0
       users&.each do |user|

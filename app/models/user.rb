@@ -55,6 +55,11 @@
     end
 
     def notifications
-      super.where("publication_date > ?", .today)
-    endDate
+      super.where("publication_date > ?", Date.today)
+    end
+
+    scope :by_role, -> (role) { where(role: role) }
+    scope :by_admin_campus, -> (campus) { where(admin_campus: campus) }
+    scope :by_email, -> (email) { where(email: email) }
+
   end
