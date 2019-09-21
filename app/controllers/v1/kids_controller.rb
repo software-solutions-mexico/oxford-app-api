@@ -89,6 +89,11 @@ module V1
       end
     end
 
+    def all_family_keys
+      @family_keys = Kid.all&.order(family_key: :asc)&.pluck(:family_key)&.uniq
+      render 'all_family_keys'
+    end
+
     private
 
     def kid_params

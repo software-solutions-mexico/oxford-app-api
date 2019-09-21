@@ -52,7 +52,6 @@ module V1
       render 'create'
     end
 
-
     def update
       @user = User.find(params[:id])
       if current_user.is_admin? || @user&.id == current_user.id
