@@ -12,5 +12,6 @@ Rails.application.routes.draw do
     resources :notifications, only:[:index, :create, :update]
     get 'notifications/by_family_key/:family_key', to: 'notifications#show_by_family_key'
     post 'notifications/update_notification/:notification_id', to: 'notifications#update_notification'
+    get 'notifications/notification_counters/:family_key', to: 'notifications#notification_counter_by_family_key'
   end
 end

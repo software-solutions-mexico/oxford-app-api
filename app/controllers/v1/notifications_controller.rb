@@ -63,7 +63,7 @@ module V1
     end
 
     def show_by_family_key
-      @notifications = Notification.where(family_key: params[:family_key])
+      @notifications = Notification.where(family_key: params[:family_key], )
       if @notifications
         render json: @notifications.order(id: :asc)
       else
@@ -78,6 +78,13 @@ module V1
       else
         head(:unauthorized)
       end
+    end
+
+    def notification_counter_by_family_key
+      notifications = Notification.where(family_key: params[:family_key])
+      @seen_notifications = notifications.where(seen: true)&.count || 0
+      @not_seen_notifications = notifications&.count - @seen_notifications
+      render 'counters'
     end
 
     private

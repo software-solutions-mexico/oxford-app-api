@@ -1,0 +1,2 @@
+json.seen_notifications @seen_notifications
+json.not_seen_notifications @not_seen_notifications
