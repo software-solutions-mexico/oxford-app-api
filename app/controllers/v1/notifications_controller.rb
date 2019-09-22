@@ -69,10 +69,10 @@ module V1
       # Create notifications on db
       @notifications_created = 0
       users&.each do |user|
-        notification = Notification.new(category: category, title: title, description: description, campus: user.kids&.first&.campus,
+        notification = user.notifications.new(category: category, title: title, description: description, campus: user.kids&.first&.campus,
                                       event_id: event_id, publication_date: publication_date, role: user.role,
-                                      grade: grades.join(','), group: groups.join(','), family_key: user.family_key, user: user)
-        @notifications_created += 1 if notification.save!
+                                      grade: grades.join(','), group: groups.join(','), family_key: user.family_key)
+        @notifications_created += 1 if notification.save! && user.save!(validate: false)
       end
 
       if @notifications_created.positive?
@@ -88,7 +88,7 @@ module V1
     end
 
     def show_by_user_id
-      @notifications = User.find(params[user_id])&.notifications
+      @notifications = Notification.where(user_id: params[:user_id])
       if @notifications
         render json: @notifications.order(id: :asc)
       else
@@ -106,7 +106,7 @@ module V1
     end
 
     def notification_counter_by_user_id
-      notifications = User.find(params[:user_id])&.notifications
+      notifications = Notification.where(user_id: params[:user_id])
       @seen_notifications = notifications.where(seen: true)&.count || 0
       @not_seen_notifications = (notifications&.count || 0) - @seen_notifications
       render 'counters'
