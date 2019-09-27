@@ -33,7 +33,7 @@ module V1
         relationship = workbook.row(row)[headers['Parentesco']].strip
         email = workbook.row(row)[headers['eMail']].strip
         password = workbook.row(row)[headers['password']]
-        role = 'PARENT'
+        role = workbook.row(row)[headers['rol']]
         if User.where(email: email).any?
           @users_not_created += 1
         else
