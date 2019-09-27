@@ -29,7 +29,7 @@ module V1
       @kids_created = 0
       @kids_not_created = 0
       ((workbook.first_row + 1)..workbook.last_row).each do |row|
-        family_key = workbook.row(row)[headers['clafamilia']].to_i.to_s
+        family_key = workbook.row(row)[headers['clafamilia']].to_s
         student_id = workbook.row(row)[headers['matricula']].to_s.strip
         full_name = workbook.row(row)[headers['Alumno']].strip
         father_last_name = workbook.row(row)[headers['appaterno']].strip
