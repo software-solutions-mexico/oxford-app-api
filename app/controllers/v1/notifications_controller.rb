@@ -141,9 +141,6 @@ module V1
         # send all notifications stored in db
         Rpush.push
       end
-
-
-      render json: {sent: true}, status: :ok
     end
 
     private
