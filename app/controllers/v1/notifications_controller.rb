@@ -113,18 +113,19 @@ module V1
     end
 
     def notify(users, notification)
-
-      devices = []
+      devices_ids = []
       users.each do |user|
-        devices << user.devices
+        devices_ids << user.devices&.pluck(:id)
       end
+
+      devices = Device.where(id: devices_ids)
 
       if devices.count.positive?
         #get all devices registered in our db and loop through each of them
         devices.each do |device|
           n = Rpush::Gcm::Notification.new
           # use the pushme_droid app we previously registered in our initializer file to send the notification
-          n.app = Rpush::Gcm::App.find_by_name("pushme_droid")
+          n.app = Rpush::Gcm::App.find_by_name("oxford-app-api")
           n.registration_ids = [device.token]
 
           # parameter for the notification
