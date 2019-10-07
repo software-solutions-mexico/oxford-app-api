@@ -3,7 +3,7 @@ class Notification < ApplicationRecord
 
   scope :by_event_id, -> (events) { where(event_id: events) }
   scope :by_role, -> (role) { where(role: role) }
-  scope :categories, -> (categories) { where(category: categories) }
+  scope :by_categories, -> (categories) { where(category: categories) }
   scope :by_title, -> (title) { where(title: title) }
   scope :by_description, -> (description) { where(description: description) }
   scope :by_publication_date, -> (publication_date) { where(publication_date: publication_date) }

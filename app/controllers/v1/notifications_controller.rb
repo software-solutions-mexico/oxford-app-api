@@ -114,15 +114,15 @@ module V1
 
     def notifications_group
       @notifications = Notification.all
-      @notifications = @notifications.by_role(params['roles']) if params['roles']
-      @notifications = @notifications.by_categories(params['categories']) if params['categories']
-      @notifications = @notifications.by_title(params['title']) if params['title']
-      @notifications = @notifications.by_description(params['description']) if params['description']
-      @notifications = @notifications.by_publication_date(params['publication_date']) if params['publication_date']
-      @notifications = @notifications.by_campuses(params['campuses']) if params['campuses']
-      @notifications = @notifications.by_grades(params['grades']) if params['grades']
-      @notifications = @notifications.by_groups(params['groups']) if params['groups']
-      @notifications = @notifications.by_family_keys(params['family_keys']) if params['family_keys']
+      @notifications = @notifications.by_role(params['roles']) if params['roles'].present?
+      @notifications = @notifications.by_categories(params['categories']) if params['categories'].present?
+      @notifications = @notifications.by_title(params['title']) if params['title'].present?
+      @notifications = @notifications.by_description(params['description']) if params['description'].present?
+      @notifications = @notifications.by_publication_date(params['publication_date']) if params['publication_date'].present?
+      @notifications = @notifications.by_campuses(params['campuses']) if params['campuses'].present?
+      @notifications = @notifications.by_grades(params['grades']) if params['grades'].present?
+      @notifications = @notifications.by_groups(params['groups']) if params['groups'].present?
+      @notifications = @notifications.by_family_keys(params['family_keys']) if params['family_keys'].present?
       events = @notifications.distinct.pluck(:event_id)
       @totals = []
       @assists = []
