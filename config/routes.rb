@@ -13,6 +13,7 @@ Rails.application.routes.draw do
     post 'users/create_users_from_xls', to: 'users#import_data_from_excel'
     resources :notifications, only:[:index, :create, :update]
     get 'notifications/by_user_id/:user_id', to: 'notifications#show_by_user_id'
+    get 'notifications/by_parameter', to: 'notifications#notifications_group'
     post 'notifications/update_notification/:notification_id', to: 'notifications#update_notification'
     get 'notifications/notification_counters/:user_id', to: 'notifications#notification_counter_by_user_id'
   end

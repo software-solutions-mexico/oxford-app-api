@@ -112,6 +112,35 @@ module V1
       render 'counters'
     end
 
+    def notifications_group
+      @notifications = Notification.all
+      @notifications = @notifications.by_role(params['roles']) if params['roles']
+      @notifications = @notifications.by_categories(params['categories']) if params['categories']
+      @notifications = @notifications.by_title(params['title']) if params['title']
+      @notifications = @notifications.by_description(params['description']) if params['description']
+      @notifications = @notifications.by_publication_date(params['publication_date']) if params['publication_date']
+      @notifications = @notifications.by_campuses(params['campuses']) if params['campuses']
+      @notifications = @notifications.by_grades(params['grades']) if params['grades']
+      @notifications = @notifications.by_groups(params['groups']) if params['groups']
+      @notifications = @notifications.by_family_keys(params['family_keys']) if params['family_keys']
+      events = @notifications.distinct.pluck(:event_id)
+      @totals = []
+      @assists = []
+      @views = []
+      @not_views = []
+      events.each do |event|
+        group = Notification.all.where(event_id: event)
+        total = group.count
+        @totals << total
+        assist = group.where(assist: true).count
+        @assists << assist
+        views = group.where(seen: true).count
+        @views << views
+        @not_views << total-views
+      end
+      render 'stats'
+    end
+
     def notify(users, notification)
       devices_ids = []
       users.each do |user|
