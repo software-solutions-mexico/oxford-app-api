@@ -141,6 +141,92 @@ module V1
       render 'stats'
     end
 
+    def create_notification_from_excel
+      workbook = Roo::Excel.new(params[:file].path, file_warning: :ignore)
+      workbook.default_sheet = workbook.sheets[0]
+      headers = Hash.new
+      workbook.row(1).each_with_index {|header,i|
+        headers[header] = i
+      }
+
+      @users_created = 0
+      @users_not_created = 0
+      ((workbook.first_row + 1)..workbook.last_row).each do |row|
+        title = workbook.row(row)[headers['titulo']]&.to_s
+        description = workbook.row(row)[headers['descripcion']]&.to_s
+        date = workbook.row(row)[headers['fecha de publicacion']]&.to_s
+        publication_date = DateTime.strptime(date, '%d/%m/%Y')
+        role = workbook.row(row)[headers['rol']]&.to_s
+        campus = workbook.row(row)[headers['campus']]&.to_s
+        grade = workbook.row(row)[headers['grado']]&.to_s
+        group = workbook.row(row)[headers['grupo']]&.to_s
+        family_key = workbook.row(row)[headers['clave de familia']]&.to_s
+        student_name = workbook.row(row)[headers['estudiante']]&.to_s
+
+        event_id = (Notification.last&.event_id&.to_i) || 0
+        event_id += 1
+
+        errors = []
+        errors << 'Categoria obligatoria' if category.blank?
+        errors << 'Titulo obligatorio' if title.blank?
+        errors << 'Descripcion obligatoria' if description.blank?
+
+        if publication_date.blank? || publication_date < Time.now.to_date
+          errors << 'Fecha vacio o anterior a hoy'
+        end
+
+        core_notification = Notification.new(title: title, description: description, publication_date: publication_date)
+
+        users = []
+
+        if role == 'ADMIN'
+          users = User.where(role: 'ADMIN')
+          users = users.by_admin_campus(campus) if campus.present?
+        elsif role == 'PARENT'
+          kids = Kid.all
+          kids = kids.by_campuses(campus) if campus.present?
+          kids = kids.by_grades(grade) if grade.present?
+          kids = kids.by_groups(group) if group.present?
+          kids = kids.by_family_keys(family_key) if family_key.present?
+          kids = kids.by_student_names(student_name) if student_name.present?
+        else
+          users = User.all
+          users = users.by_admin_campus(campuses) if campuses.present?
+          kids = Kid.all
+          kids = kids.by_campuses(campuses) if campuses.present?
+          kids = kids.by_grades(grades) if grades.present?
+          kids = kids.by_groups(groups) if groups.present?
+          kids = kids.by_family_keys(family_keys) if family_keys.present?
+          kids = kids.by_student_names(student_names) if student_names.present?
+          kids&.each do |kid|
+            kid.users.each { |user| users << user }
+          end
+        end
+
+        # Create notifications on db
+        @notifications_created = 0
+        users&.each do |user|
+          notification = user.notifications.new(category: category, title: title, description: description, campus: user.kids&.first&.campus,
+                                                event_id: event_id, publication_date: publication_date, role: user.role,
+                                                grade: grades.join(','), group: groups.join(','), family_key: user.family_key)
+          @notifications_created += 1 if notification.save! && user.save!(validate: false)
+        end
+      end
+
+      if @notifications_created.positive?
+        begin
+          notify(users, core_notification)
+        rescue
+
+        end
+        render :create
+      else
+        render json: { errors: 'Users not found for notification delivery'}, status: :partial_content
+      end
+
+      render 'create_from_excel'
+    end
+
     def notify(users, notification)
       devices_ids = []
       users.each do |user|
