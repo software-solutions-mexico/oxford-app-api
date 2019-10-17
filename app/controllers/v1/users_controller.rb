@@ -27,23 +27,26 @@ module V1
 
       @users_created = 0
       @users_not_created = 0
+      @emails_not_created = []
+      @emails_already_registered = []
       ((workbook.first_row + 1)..workbook.last_row).each do |row|
         family_key = workbook.row(row)[headers['clafamilia']].to_s
         name = workbook.row(row)[headers['Nombre']]&.strip
-        relationship = workbook.row(row)[headers['Parentesco']]&.strip
         email = workbook.row(row)[headers['eMail']]&.strip
         password = workbook.row(row)[headers['password']]
         role = workbook.row(row)[headers['rol']]
         if User.where(email: email).any?
           @users_not_created += 1
+          @emails_already_registered << email
         else
           user = User.new(email: email, password: password, password: password,
                           password_confirmation: password, name: name, role: role,
-                          relationship: relationship, family_key: family_key)
+                          family_key: family_key)
           if user.save
             @users_created += 1
           else
             @users_not_created += 1
+            @emails_not_created << email
           end
         end
 
