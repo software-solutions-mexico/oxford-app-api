@@ -128,8 +128,14 @@ module V1
       @assists = []
       @views = []
       @not_views = []
+      @related_kids = []
       events.each do |event|
         group = Notification.all.where(event_id: event)
+        user_kids_notified = []
+        group.each do |notification|
+          user_kids_notified << notification&.user&.kids
+        end
+        @related_kids << user_kids_notified
         total = group.count
         @totals << total
         assist = group.where(assist: true).count
@@ -138,6 +144,7 @@ module V1
         @views << views
         @not_views << total-views
       end
+      @events_found = @notifications.count
       render 'stats'
     end
 
