@@ -20,8 +20,10 @@
 
     def normalize_date
       self.name&.upcase!
-      self.relationship&.upcase!
-      self.relationship == ["PADRE", "MADRE", "PARENT"] ? self.role = "PARENT" : self.role = "ADMIN"
+      if self.relationship
+        self.relationship.upcase!
+        self.relationship == ["PADRE", "MADRE", "PARENT"] ? self.role = "PARENT" : self.role = "ADMIN"
+      end
     end
 
     def is_admin?
