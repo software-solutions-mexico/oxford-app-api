@@ -29,15 +29,15 @@ module V1
       @kids_created = 0
       @kids_not_created = 0
       ((workbook.first_row + 1)..workbook.last_row).each do |row|
-        family_key = workbook.row(row)[headers['clafamilia']].to_s
-        student_id = workbook.row(row)[headers['matricula']].to_s.strip
-        full_name = workbook.row(row)[headers['Alumno']].strip
-        father_last_name = workbook.row(row)[headers['appaterno']].strip
-        mother_last_name = workbook.row(row)[headers['apmaterno']].strip
-        name = workbook.row(row)[headers['nombre']].strip
-        campus = workbook.row(row)[headers['Campus']].strip
-        grade = workbook.row(row)[headers['Grado']].to_s.strip
-        group = workbook.row(row)[headers['Grupo']].to_s.strip
+        family_key = workbook.row(row)[headers['clafamilia']].to_s.strip[/[^.]+/]
+        student_id = workbook.row(row)[headers['matricula']].to_s.upcase.strip[/[^.]+/]
+        full_name = workbook.row(row)[headers['Alumno']].to_s.upcase.strip
+        father_last_name = workbook.row(row)[headers['appaterno']].to_s.upcase.strip
+        mother_last_name = workbook.row(row)[headers['apmaterno']].to_s.upcase.strip
+        name = workbook.row(row)[headers['nombre']].to_s.upcase.strip
+        campus = workbook.row(row)[headers['Campus']].to_s.strip[/[^.]+/]
+        grade = workbook.row(row)[headers['Grado']].to_s.strip[/[^.]+/]
+        group = workbook.row(row)[headers['Grupo']].to_s.upcase.strip
 
         if Kid.where(student_id: student_id, family_key: family_key).any?
           @kids_not_created += 1

@@ -48,6 +48,7 @@ GEM
       msgpack (~> 1.0)
     builder (3.2.3)
     byebug (11.0.1)
+    choice (0.2.0)
     concurrent-ruby (1.1.5)
     connection_pool (2.2.2)
     crass (1.0.4)
@@ -113,6 +114,11 @@ GEM
     rails-dom-testing (2.0.3)
       activesupport (>= 4.2.0)
       nokogiri (>= 1.6)
+    rails-erd (1.6.0)
+      activerecord (>= 4.2)
+      activesupport (>= 4.2)
+      choice (~> 0.2.0)
+      ruby-graphviz (~> 1.2)
     rails-html-sanitizer (1.0.4)
       loofah (~> 2.2, >= 2.2.2)
     railties (5.2.3)
@@ -159,6 +165,7 @@ GEM
       rspec-mocks (~> 3.8.0)
       rspec-support (~> 3.8.0)
     rspec-support (3.8.2)
+    ruby-graphviz (1.2.4)
     ruby-ole (1.2.12.2)
     rubyzip (1.2.2)
     simple_token_authentication (1.15.1)
@@ -201,6 +208,7 @@ DEPENDENCIES
   puma (~> 3.11)
   rack-cors
   rails (~> 5.2.3)
+  rails-erd
   roo (~> 2.8.0)
   roo-xls
   rpush

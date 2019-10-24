@@ -40,8 +40,17 @@ module V1
       users = []
 
       if role == 'ADMIN'
-        users = User.where(role: 'ADMIN')
-        users = users.by_admin_campus(campuses) if campuses.present?
+        no_admin_params = true
+        no_admin_params = false if grades.present?
+        no_admin_params = false if groups.present?
+        no_admin_params = false if family_keys.present?
+        no_admin_params = false if student_names.present?
+        if no_admin_params
+          users = User.where(role: 'ADMIN')
+          users = users.by_admin_campus(campuses) if campuses.present?
+        else
+          return render json: { errors: 'Admin notifications can not receive Parent parameters'}, status: :partial_content
+        end
       elsif role == 'PARENT'
         kids = Kid.all
         kids = kids.by_campuses(campuses) if campuses.present?
@@ -49,6 +58,7 @@ module V1
         kids = kids.by_groups(groups) if groups.present?
         kids = kids.by_family_keys(family_keys) if family_keys.present?
         kids = kids.by_student_names(student_names) if student_names.present?
+        kids = kids.uniq{|t| t.family_key } if kids.present?
         kids&.each do |kid|
           kid.users.each { |user| users << user }
         end
@@ -61,6 +71,7 @@ module V1
         kids = kids.by_groups(groups) if groups.present?
         kids = kids.by_family_keys(family_keys) if family_keys.present?
         kids = kids.by_student_names(student_names) if student_names.present?
+        kids = kids.uniq{|t| t.family_key } if kids.present?
         kids&.each do |kid|
           kid.users.each { |user| users << user }
         end

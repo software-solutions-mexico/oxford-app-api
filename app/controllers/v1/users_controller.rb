@@ -30,11 +30,11 @@ module V1
       @emails_not_created = []
       @emails_already_registered = []
       ((workbook.first_row + 1)..workbook.last_row).each do |row|
-        family_key = workbook.row(row)[headers['clafamilia']].to_s
-        name = workbook.row(row)[headers['Nombre']]&.strip
-        email = workbook.row(row)[headers['eMail']]&.strip
+        family_key = workbook.row(row)[headers['clafamilia']].to_s.strip[/[^.]+/]
+        name = workbook.row(row)[headers['Nombre']].to_s.upcase.strip
+        email = workbook.row(row)[headers['eMail']].to_s.strip
         password = workbook.row(row)[headers['password']]
-        role = workbook.row(row)[headers['rol']]
+        role = workbook.row(row)[headers['rol']].to_s.upcase.strip
         if User.where(email: email).any?
           @users_not_created += 1
           @emails_already_registered << email
