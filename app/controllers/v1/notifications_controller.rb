@@ -80,10 +80,15 @@ module V1
       # Create notifications on db
       @notifications_created = 0
       users&.each do |user|
-        notification = user.notifications.new(category: category, title: title, description: description, campus: user.kids&.first&.campus,
-                                      event_id: event_id, publication_date: publication_date, role: user.role,
-                                      grade: grades.join(','), group: groups.join(','), family_key: user.family_key)
-        @notifications_created += 1 if notification.save! && user.save!(validate: false)
+        begin
+          notification = user.notifications.new(category: category, title: title, description: description, campus: user.kids&.first&.campus,
+                                                event_id: event_id, publication_date: publication_date, role: user.role,
+                                                grade: grades&.join(',') || '', group: groups&.join(',') || '', family_key: user.family_key)
+          @notifications_created += 1 if notification.save! && user.save!(validate: false)
+        rescue
+
+        end
+
       end
 
       if @notifications_created.positive?
