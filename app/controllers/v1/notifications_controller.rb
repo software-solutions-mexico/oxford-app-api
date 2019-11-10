@@ -6,7 +6,7 @@ module V1
     before_action :comprobe_admin, only: :create
 
     def index
-      render json: Notification.all.order(publication_date: :asc)
+      render json: Notification.all.order(publication_date: :asc).order(category: :asc)
     end
 
     def create
@@ -106,7 +106,7 @@ module V1
     def show_by_user_id
       @notifications = Notification.where(user_id: params[:user_id])
       if @notifications
-        render json: @notifications.order(id: :asc)
+        render json: @notifications.order(publication_date: :asc).order(category: :asc)
       else
         head(:unauthorized)
       end
@@ -139,6 +139,16 @@ module V1
       @notifications = @notifications.by_grades(params['grades']) if params['grades'].present?
       @notifications = @notifications.by_groups(params['groups']) if params['groups'].present?
       @notifications = @notifications.by_family_keys(params['family_keys']) if params['family_keys'].present?
+      if params['from_date'].present? && params['until_date'].present?
+        from_date = params['from_date'].to_datetime
+        until_date = params['until_date'].to_datetime
+        if from_date < until_date
+          @notifications = @notifications.with_date(params['from_date'], params['until_date'])
+        else
+          return render json: { errors: 'Date arrange invalid'}, status: :internal_server_error
+        end
+      end
+
       events = @notifications.distinct.pluck(:event_id)
       @totals = []
       @assists = []
@@ -160,6 +170,7 @@ module V1
         @views << views
         @not_views << total-views
       end
+      @notifications&.order(publication_date: :asc)&.order(category: :asc)
       @events_found = @notifications.count
       render 'stats'
     end

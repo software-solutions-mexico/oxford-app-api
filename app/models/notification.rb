@@ -12,4 +12,8 @@ class Notification < ApplicationRecord
   scope :by_groups, -> (groups) { where(group: groups) }
   scope :by_family_keys, -> (family_keys) { where(family_key: family_keys) }
   scope :by_student_names, -> (student_names) { where(name: student_names) }
+  scope :with_date, (lambda do |start_date, end_date|
+    where("publication_date > ? AND publication_date < ?",
+          start_date, end_date)
+  end)
 end
