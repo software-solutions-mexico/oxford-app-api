@@ -186,16 +186,17 @@ module V1
       @users_created = 0
       @users_not_created = 0
       ((workbook.first_row + 1)..workbook.last_row).each do |row|
-        title = workbook.row(row)[headers['titulo']]&.to_s
-        description = workbook.row(row)[headers['descripcion']]&.to_s
-        date = workbook.row(row)[headers['fecha de publicacion']]&.to_s
+        category = workbook.row(row)[headers['CATEGORIA']]&.to_s
+        title = workbook.row(row)[headers['TITULO']]&.to_s
+        description = workbook.row(row)[headers['DESCRIPCION']]&.to_s
+        date = workbook.row(row)[headers['FECHA DE PUBLICACION']]&.to_s
         publication_date = DateTime.strptime(date, '%d/%m/%Y')
-        role = workbook.row(row)[headers['rol']]&.to_s
-        campus = workbook.row(row)[headers['campus']]&.to_s
-        grade = workbook.row(row)[headers['grado']]&.to_s
-        group = workbook.row(row)[headers['grupo']]&.to_s
-        family_key = workbook.row(row)[headers['clave de familia']]&.to_s
-        student_name = workbook.row(row)[headers['estudiante']]&.to_s
+        role = workbook.row(row)[headers['ROL']]&.to_s
+        campus = workbook.row(row)[headers['CAMPUS']]&.to_s
+        grade = workbook.row(row)[headers['GRADO']]&.to_s
+        group = workbook.row(row)[headers['GRUPO']]&.to_s
+        family_key = workbook.row(row)[headers['CLAVE FAMILIAR']]&.to_s
+        student_name = workbook.row(row)[headers['ESTUDIANTE']]&.to_s
 
         event_id = (Notification.last&.event_id&.to_i) || 0
         event_id += 1
