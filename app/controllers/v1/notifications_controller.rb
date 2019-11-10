@@ -248,18 +248,18 @@ module V1
         end
       end
 
-      if @notifications_created.positive?
+      if @notifications_created&.positive?
         begin
           notify(users, core_notification)
         rescue
 
         end
-        render :create
+        return render :create
       else
-        render json: { errors: 'Users not found for notification delivery'}, status: :partial_content
+        return render json: { errors: 'Users not found for notification delivery'}, status: :partial_content
       end
 
-      render 'create_from_excel'
+      return render 'create_from_excel'
     end
 
     def notify(users, notification)
