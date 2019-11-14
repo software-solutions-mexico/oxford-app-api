@@ -29,6 +29,10 @@ module V1
       errors << 'Titulo obligatorio' if title.blank?
       errors << 'Descripcion obligatoria' if description.blank?
 
+      if publication_date&.today?
+        publication_date = Time.now.to_date + 2.minutes
+      end
+
       if publication_date.blank? || publication_date < Time.now.to_date
         errors << 'Fecha vacio o anterior a hoy'
       end
@@ -205,6 +209,10 @@ module V1
         errors << 'Categoria obligatoria' if category.blank?
         errors << 'Titulo obligatorio' if title.blank?
         errors << 'Descripcion obligatoria' if description.blank?
+
+        if publication_date&.today?
+          publication_date = Time.now.to_date + 2.minutes
+        end
 
         if publication_date.blank? || publication_date < Time.now.to_date
           errors << 'Fecha vacio o anterior a hoy'
