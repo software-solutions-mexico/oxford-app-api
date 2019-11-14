@@ -14,7 +14,7 @@ module V1
       title = notification_params['title']
       description = notification_params['description']
       date = notification_params['publication_date']
-      publication_date = DateTime.strptime(date, '%d/%m/%Y')
+      publication_date = DateTime.strptime(date, '%d/%m/%Y').in_time_zone("Monterrey") + 12.hours if date
       role = notification_params['role']
       campuses = notification_params['campuses']&.reject(&:blank?)
       grades = notification_params['grades']&.reject(&:blank?)
@@ -30,7 +30,9 @@ module V1
       errors << 'Descripcion obligatoria' if description.blank?
 
       if publication_date&.today?
-        publication_date = Time.now.to_date + 2.minutes
+        publication_date = DateTime.now + 2.minutes
+      elsif publication_date > Time.now
+        publication_date = publication_date.change({ hour: 4 })
       end
 
       if publication_date.blank? || publication_date < Time.now.to_date
@@ -194,7 +196,7 @@ module V1
         title = workbook.row(row)[headers['TITULO']]&.to_s
         description = workbook.row(row)[headers['DESCRIPCION']]&.to_s
         date = workbook.row(row)[headers['FECHA DE PUBLICACION']]&.to_s
-        publication_date = DateTime.strptime(date, '%d/%m/%Y')
+        publication_date = DateTime.strptime(date, '%d/%m/%Y').in_time_zone("Monterrey") + 12.hours if date
         role = workbook.row(row)[headers['ROL']]&.to_s
         campus = workbook.row(row)[headers['CAMPUS']]&.to_s
         grade = workbook.row(row)[headers['GRADO']]&.to_s
@@ -211,7 +213,9 @@ module V1
         errors << 'Descripcion obligatoria' if description.blank?
 
         if publication_date&.today?
-          publication_date = Time.now.to_date + 2.minutes
+          publication_date = DateTime.now + 2.minutes
+        elsif publication_date > Time.now
+          publication_date = publication_date.change({ hour: 4 })
         end
 
         if publication_date.blank? || publication_date < Time.now.to_date
