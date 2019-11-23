@@ -87,7 +87,8 @@ module V1
       @notifications_created = 0
       users&.each do |user|
         begin
-          notification = user.notifications.new(category: category, title: title, description: description, campus: user.kids&.first&.campus,
+          notification = user.notifications.new(category: category, title: title, description: description,
+                                                campus: (user.kids&.first&.campus || user.admin_campus),
                                                 event_id: event_id, publication_date: publication_date, role: user.role,
                                                 grade: grades&.join(',') || '', group: groups&.join(',') || '', family_key: user.family_key)
           @notifications_created += 1 if notification.save! && user.save!(validate: false)
