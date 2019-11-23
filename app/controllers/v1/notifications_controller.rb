@@ -110,7 +110,7 @@ module V1
     end
 
     def show_by_user_id
-      @notifications = Notification.where(user_id: params[:user_id])
+      @notifications = Notification.where(user_id: params[:user_id])&.after_date
       if @notifications
         render json: @notifications.order(publication_date: :asc).order(category: :asc)
       else
