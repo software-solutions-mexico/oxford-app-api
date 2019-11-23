@@ -161,12 +161,16 @@ module V1
       @views = []
       @not_views = []
       @related_kids = []
+      @parents_email = []
       events.each do |event|
         group = Notification.all.where(event_id: event)
         user_kids_notified = []
+        parents_email = []
         group.each do |notification|
           user_kids_notified << notification&.user&.kids
+          parents_email << notification&.user&.email
         end
+        @parents_email << parents_email
         @related_kids << user_kids_notified
         total = group.count
         @totals << total
