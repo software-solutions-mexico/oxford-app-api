@@ -7,6 +7,7 @@ json.events @notifications.zip(@totals, @assists, @views, @not_views, @related_k
   json.campus notification.campus
   json.grade notification.grade
   json.group notification.group
+  json.updated_at notification.updated_at
   json.total total
   json.assist assist
   json.view view
