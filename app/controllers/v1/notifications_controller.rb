@@ -14,7 +14,7 @@ module V1
       title = notification_params['title']
       description = notification_params['description']
       date = notification_params['publication_date']
-      publication_date = DateTime.strptime(date, '%d/%m/%Y').in_time_zone("Monterrey") + 12.hours if date
+      publication_date = DateTime.strptime(date, '%Y/%m/%d').in_time_zone("Monterrey") + 12.hours if date
       role = notification_params['role']
       campuses = notification_params['campuses']&.reject(&:blank?)
       grades = notification_params['grades']&.reject(&:blank?)
@@ -142,7 +142,7 @@ module V1
       @notifications = @notifications.by_title(params['title']) if params['title'].present?
       @notifications = @notifications.by_description(params['description']) if params['description'].present?
       date = notification_params['publication_date']
-      publication_date = DateTime.strptime(date, '%d/%m/%Y').in_time_zone("Monterrey") + 12.hours if date
+      publication_date = DateTime.strptime(date, '%Y/%m/%d').in_time_zone("Monterrey") + 12.hours if date
       @notifications = @notifications.by_publication_date(params['publication_date']) if params['publication_date'].present?
       @notifications = @notifications.by_campuses(params['campuses']) if params['campuses'].present?
       @notifications = @notifications.by_grades(params['grades']) if params['grades'].present?
