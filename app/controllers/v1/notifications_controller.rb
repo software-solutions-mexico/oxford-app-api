@@ -141,9 +141,13 @@ module V1
       @notifications = @notifications.by_categories(params['categories']) if params['categories'].present?
       @notifications = @notifications.by_title(params['title']) if params['title'].present?
       @notifications = @notifications.by_description(params['description']) if params['description'].present?
-      date = notification_params['publication_date']
-      publication_date = DateTime.strptime(date, '%Y/%m/%d').in_time_zone("Monterrey") + 12.hours if date
-      @notifications = @notifications.by_publication_date(params['publication_date']) if params['publication_date'].present?
+      date = notification_params['publication_date'] if notification_params['publication_date'].present?
+      if date
+        publication_date = DateTime.strptime(date, '%Y/%m/%d').in_time_zone("Monterrey") + 12.hours
+        params['from_date'] = publication_date
+        params['until_date'] = publication_date
+      end
+
       @notifications = @notifications.by_campuses(params['campuses']) if params['campuses'].present?
       @notifications = @notifications.by_grades(params['grades']) if params['grades'].present?
       @notifications = @notifications.by_groups(params['groups']) if params['groups'].present?
@@ -151,8 +155,13 @@ module V1
       if params['from_date'].present? && params['until_date'].present?
         from_date = params['from_date'].to_datetime
         until_date = params['until_date'].to_datetime
+        if from_date == until_date
+          from_date -= 6.hours
+          until_date += 18.hours
+        end
+
         if from_date < until_date
-          @notifications = @notifications.with_date(params['from_date'], params['until_date'])
+          @notifications = @notifications.with_date(from_date, until_date)
         else
           return render json: { errors: 'Date arrange invalid'}, status: :internal_server_error
         end
