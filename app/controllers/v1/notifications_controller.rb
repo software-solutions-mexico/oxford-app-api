@@ -143,9 +143,8 @@ module V1
       @notifications = @notifications.by_description(params['description']) if params['description'].present?
       date = notification_params['publication_date'] if notification_params['publication_date'].present?
       if date
-        publication_date = DateTime.strptime(date, '%Y/%m/%d').in_time_zone("Monterrey") + 6.hours
-        params['from_date'] = publication_date
-        params['until_date'] = publication_date
+        params['from_date'] = date
+        params['until_date'] = date
       end
 
       @notifications = @notifications.by_campuses(params['campuses']) if params['campuses'].present?
