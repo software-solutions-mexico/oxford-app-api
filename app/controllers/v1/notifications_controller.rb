@@ -14,7 +14,7 @@ module V1
       title = notification_params['title']
       description = notification_params['description']
       date = notification_params['publication_date']
-      publication_date = DateTime.strptime(date, '%Y/%m/%d').in_time_zone("Monterrey") + 12.hours if date
+      publication_date = DateTime.strptime(date, '%Y/%m/%d').in_time_zone("Monterrey") + 6.hours if date
       role = notification_params['role']
       campuses = notification_params['campuses']&.reject(&:blank?)
       grades = notification_params['grades']&.reject(&:blank?)
@@ -143,7 +143,7 @@ module V1
       @notifications = @notifications.by_description(params['description']) if params['description'].present?
       date = notification_params['publication_date'] if notification_params['publication_date'].present?
       if date
-        publication_date = DateTime.strptime(date, '%Y/%m/%d').in_time_zone("Monterrey") + 12.hours
+        publication_date = DateTime.strptime(date, '%Y/%m/%d').in_time_zone("Monterrey") + 6.hours
         params['from_date'] = publication_date
         params['until_date'] = publication_date
       end
@@ -153,12 +153,9 @@ module V1
       @notifications = @notifications.by_groups(params['groups']) if params['groups'].present?
       @notifications = @notifications.by_family_keys(params['family_keys']) if params['family_keys'].present?
       if params['from_date'].present? && params['until_date'].present?
-        from_date = params['from_date'].to_datetime
-        until_date = params['until_date'].to_datetime
-        if from_date == until_date
-          from_date -= 6.hours
-          until_date += 18.hours
-        end
+        from_date =  DateTime.strptime(params['from_date'], '%Y/%m/%d').in_time_zone("Monterrey") + 6.hours
+        until_date = DateTime.strptime(params['until_date'], '%Y/%m/%d').in_time_zone("Monterrey") + 6.hours
+        until_date += 24.hours if from_date == until_date
 
         if from_date < until_date
           @notifications = @notifications.with_date(from_date, until_date)
@@ -212,7 +209,7 @@ module V1
         title = workbook.row(row)[headers['TITULO']]&.to_s
         description = workbook.row(row)[headers['DESCRIPCION']]&.to_s
         date = workbook.row(row)[headers['FECHA DE PUBLICACION']]&.to_s
-        publication_date = DateTime.strptime(date, '%d/%m/%Y').in_time_zone("Monterrey") + 12.hours if date
+        publication_date = DateTime.strptime(date, '%d/%m/%Y').in_time_zone("Monterrey") + 6.hours if date
         role = workbook.row(row)[headers['ROL']]&.to_s
         campus = workbook.row(row)[headers['CAMPUS']]&.to_s
         grade = workbook.row(row)[headers['GRADO']]&.to_s
