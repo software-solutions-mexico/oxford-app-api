@@ -1,4 +1,5 @@
 json.events @notifications.zip(@totals, @assists, @views, @not_views, @related_kids, @parents_email) do |notification, total, assist, view, not_view, related_kids, parent_email|
+  json.id notification.id
   json.category notification.category
   json.title notification.title
   json.description notification.description
