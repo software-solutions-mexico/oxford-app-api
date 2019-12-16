@@ -7,6 +7,9 @@ Rails.application.routes.draw do
     resources :users, only:[:index, :create, :update]
     resources :kids, only:[:index, :create, :show, :update]
     resources :devices
+    get 'campus/by_name', to: 'campus#show_by_name'
+    resources :campus
+
     get 'kids/by_family_key/:family_key', to: 'kids#show_by_family_key'
     get 'all_family_keys', to: 'kids#all_family_keys'
     post 'kids/create_kids_from_xls', to: 'kids#import_data_from_excel'

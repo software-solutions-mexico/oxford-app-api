@@ -100,10 +100,6 @@ module V1
       params.require(:kid).permit(:full_name, :name, :father_last_name, :mother_last_name, :grade, :group, :family_key, :campus, :student_id)
     end
 
-    def permission
-      head :unauthorized if current_user&.role != 'ADMIN'
-    end
-
     def show_kid?
       current_user.is_admin? || current_user.kids.where(id: @kids).any?
     end

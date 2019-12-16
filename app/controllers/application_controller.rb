@@ -25,4 +25,8 @@ class ApplicationController < ActionController::API
   def comprobe_admin
     head :unauthorized if [current_user&.role&.upcase, current_user&.role&.downcase, current_user&.role&.capitalize] != ["ADMIN","admin","Admin"]
   end
+
+  def permission
+    head :unauthorized if current_user&.role != 'ADMIN'
+  end
 end
