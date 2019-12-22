@@ -7,7 +7,8 @@ Rails.application.routes.draw do
     resources :users, only:[:index, :create, :update]
     resources :kids, only:[:index, :create, :show, :update]
     resources :devices
-    get 'campus/by_name', to: 'campus#show_by_name'
+    get 'campus/grades/by_name', to: 'campus#show_by_name'
+    get 'campus/groups/by_name_and_grade', to: 'campus#show_groups_by_campus_and_grades'
     resources :campus
 
     get 'kids/by_family_key/:family_key', to: 'kids#show_by_family_key'

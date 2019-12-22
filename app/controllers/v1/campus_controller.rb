@@ -17,7 +17,34 @@ module V1
 
     def show_by_name
       @campus = Campus.where(name: params['names'])
-      render :show
+      @names = []
+      grades = []
+      @campus.each do |campus|
+        @names << campus.name
+        campus.groups.split(', ').each do |group|
+          grades << group.split(/(?<=\d)(?=[A-Za-z])/).first.to_i
+        end
+      end
+      @names = @names.uniq
+      @grades = grades.uniq
+      render :show_grades
+    end
+
+    def show_groups_by_campus_and_grades
+      @campus = Campus.where(name: params['names'])
+      grades = params["grades"]
+      @groups = []
+      @names = []
+      @campus.each do |campus|
+        @names << campus.name
+        campus.groups.split(', ').each do |group|
+          gruop_array = group.split(/(?<=\d)(?=[A-Za-z])/)
+          @groups << gruop_array.last if grades.include?(gruop_array.first)
+        end
+      end
+      @names = @names.uniq
+      @groups = @groups.uniq
+      render :show_groups
     end
 
     # POST /v1/campus
