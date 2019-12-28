@@ -135,6 +135,8 @@ module V1
       render 'counters'
     end
 
+    Parent = Struct.new(:email, :assist, :seen, :kids)
+
     def notifications_group
       @notifications = Notification.all
       @notifications = @notifications.by_role(params['roles']) if params['roles'].present?
@@ -169,17 +171,18 @@ module V1
       @views = []
       @not_views = []
       @related_kids = []
-      @parents_email = []
+      @parents = []
+      @individual_assists = []
+      @individual_seen = []
       events.each do |event|
         group = Notification.all.where(event_id: event)
         user_kids_notified = []
-        parents_email = []
+        parents = []
         group.each do |notification|
-          user_kids_notified << notification&.user&.kids
-          parents_email << notification&.user&.email
+          parent = Parent.new(notification&.user&.email, notification.assist, notification.seen, notification&.user&.kids)
+          parents << parent
         end
-        @parents_email << parents_email
-        @related_kids << user_kids_notified
+        @parents << parents
         total = group.count
         @totals << total
         assist = group.where(assist: true).count
