@@ -1,4 +1,4 @@
-json.events @notifications.zip(@totals, @assists, @views, @not_views, @parents) do |notification, total, assist, view, not_view, parent|
+json.events @notifications.zip(@totals, @assists, @views, @not_views, @parents, @total_kids) do |notification, total, assist, view, not_view, parent, total_kids|
   json.id notification.id
   json.category notification.category
   json.title notification.title
@@ -13,6 +13,7 @@ json.events @notifications.zip(@totals, @assists, @views, @not_views, @parents) 
   json.assist assist
   json.view view
   json.not_view not_view
+  json.total_kids total_kids
   json.parents parent
 end
 

@@ -51,9 +51,12 @@ module V1
     # POST /v1/campus.json
     def create
       @campus = Campus.new(campus_params)
+      if Campus.where(name: campus_params['name'].upcase).any?
+        return render json: { errors: 'Campus with that name already exists' }, status: :internal_server_error
+      end
 
       if @campus.save
-        render :show, status: :created, location: @campus
+        render 'v1/campus/show', status: :created
       else
         render json: @campus.errors, status: :unprocessable_entity
       end

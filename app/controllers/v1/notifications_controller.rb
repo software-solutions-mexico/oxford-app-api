@@ -41,7 +41,7 @@ module V1
 
       core_notification = Notification.new(title: title, description: description, publication_date: publication_date)
 
-      return render json: { errors: errors }, status: :unauthorized if errors.any?
+      return render json: { errors: errors }, status: :internal_server_error if errors.any?
       
       users = []
 
@@ -174,13 +174,18 @@ module V1
       @parents = []
       @individual_assists = []
       @individual_seen = []
+      @total_kids = []
       events.each do |event|
         group = Notification.all.where(event_id: event)
         parents = []
+        total_kids = 0
         group.each do |notification|
-          parent = Parent.new(notification&.user&.email, notification.assist, notification.seen, notification&.user&.kids&.count, notification&.user&.kids)
+          parent_kids = notification&.user&.kids&.count
+          total_kids += parent_kids
+          parent = Parent.new(notification&.user&.email, notification.assist, notification.seen, parent_kids, notification&.user&.kids)
           parents << parent
         end
+        @total_kids << total_kids
         @parents << parents
         total = group.count
         @totals << total
