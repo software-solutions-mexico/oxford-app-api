@@ -135,7 +135,7 @@ module V1
       render 'counters'
     end
 
-    Parent = Struct.new(:email, :assist, :seen, :kids)
+    Parent = Struct.new(:email, :assist, :seen, :total_kids, :kids)
 
     def notifications_group
       @notifications = Notification.all
@@ -176,10 +176,9 @@ module V1
       @individual_seen = []
       events.each do |event|
         group = Notification.all.where(event_id: event)
-        user_kids_notified = []
         parents = []
         group.each do |notification|
-          parent = Parent.new(notification&.user&.email, notification.assist, notification.seen, notification&.user&.kids)
+          parent = Parent.new(notification&.user&.email, notification.assist, notification.seen, notification&.user&.kids&.count, notification&.user&.kids)
           parents << parent
         end
         @parents << parents
@@ -195,7 +194,6 @@ module V1
       @events_found = @notifications.count
       render 'stats'
     end
-
     def create_notification_from_excel
       workbook = Roo::Excel.new(params[:file].path, file_warning: :ignore)
       workbook.default_sheet = workbook.sheets[0]
@@ -205,6 +203,7 @@ module V1
       }
 
       @users_created = 0
+
       @users_not_created = 0
       ((workbook.first_row + 1)..workbook.last_row).each do |row|
         category = workbook.row(row)[headers['CATEGORIA']]&.to_s
