@@ -52,7 +52,8 @@ module V1
     def create
       @campus = Campus.new(campus_params)
       if Campus.where(name: campus_params['name'].upcase).any?
-        return render json: { errors: 'Campus with that name already exists' }, status: :internal_server_error
+        campuses = Campus.where(name: campus_params['name'].upcase)
+        campuses.destroy_all
       end
 
       if @campus.save
