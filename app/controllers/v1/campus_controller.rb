@@ -82,6 +82,7 @@ module V1
     def delete_campus_by_name
       @campus = Campus.where(name: params['names'])
       @campus.destroy_all
+      head(:ok)
     end
 
     private
