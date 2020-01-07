@@ -215,13 +215,8 @@ module V1
         title = workbook.row(row)[headers['TITULO']]&.to_s
         description = workbook.row(row)[headers['DESCRIPCION']]&.to_s
         date = workbook.row(row)[headers['FECHA DE PUBLICACION']]&.to_s
-        publication_date = DateTime.strptime(date, '%d/%m/%Y').in_time_zone("Monterrey") + 6.hours if date
-        role = workbook.row(row)[headers['ROL']]&.to_s
-        campus = workbook.row(row)[headers['CAMPUS']]&.to_s
-        grade = workbook.row(row)[headers['GRADO']]&.to_s
-        group = workbook.row(row)[headers['GRUPO']]&.to_s
-        family_key = workbook.row(row)[headers['CLAVE FAMILIAR']]&.to_s
-        student_name = workbook.row(row)[headers['ESTUDIANTE']]&.to_s
+        publication_date = DateTime.strptime(date, '%Y-%d-%m').in_time_zone("Monterrey") + 6.hours if date
+        family_key = workbook.row(row)[headers['CLAVE FAMILIAR']]&.to_s if headers['CLAVE FAMILIAR']
 
         event_id = (Notification.last&.event_id&.to_i) || 0
         event_id += 1
@@ -245,36 +240,18 @@ module V1
 
         users = []
 
-        if role == 'ADMIN'
-          users = User.where(role: 'ADMIN')
-          users = users.by_admin_campus(campus) if campus.present?
-        elsif role == 'PARENT'
-          kids = Kid.all
-          kids = kids.by_campuses(campus) if campus.present?
-          kids = kids.by_grades(grade) if grade.present?
-          kids = kids.by_groups(group) if group.present?
-          kids = kids.by_family_keys(family_key) if family_key.present?
-          kids = kids.by_student_names(student_name) if student_name.present?
-        else
-          users = User.all
-          users = users.by_admin_campus(campuses) if campuses.present?
-          kids = Kid.all
-          kids = kids.by_campuses(campuses) if campuses.present?
-          kids = kids.by_grades(grades) if grades.present?
-          kids = kids.by_groups(groups) if groups.present?
-          kids = kids.by_family_keys(family_keys) if family_keys.present?
-          kids = kids.by_student_names(student_names) if student_names.present?
-          kids&.each do |kid|
-            kid.users.each { |user| users << user }
-          end
+        kids = Kid.all
+        kids = kids.by_family_keys(family_key) if family_key.present?
+        kids = kids.uniq{|t| t.family_key } if kids.present?
+        kids&.each do |kid|
+          kid.users.each { |user| users << user }
         end
 
         # Create notifications on db
         @notifications_created = 0
         users&.each do |user|
           notification = user.notifications.new(category: category, title: title, description: description, campus: user.kids&.first&.campus,
-                                                event_id: event_id, publication_date: publication_date, role: user.role,
-                                                grade: grades.join(','), group: groups.join(','), family_key: user.family_key)
+                                                event_id: event_id, publication_date: publication_date, role: user.role, family_key: user.family_key)
           @notifications_created += 1 if notification.save! && user.save!(validate: false)
         end
       end
