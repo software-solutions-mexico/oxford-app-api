@@ -78,6 +78,11 @@ module V1
       @campus.destroy
     end
 
+    def delete_campus_by_name
+      @campus = Campus.where(name: params['names'])
+      @campus.destroy_all
+    end
+
     private
       # Use callbacks to share common setup or constraints between actions.
       def set_campus

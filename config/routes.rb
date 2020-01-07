@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     resources :devices
     post 'campus/grades/by_name', to: 'campus#show_by_name'
     post 'campus/groups/by_name_and_grade', to: 'campus#show_groups_by_campus_and_grades'
+    delete 'campus/by_name', to: 'campus#delete_campus_by_name'
     resources :campus
 
     get 'kids/by_family_key/:family_key', to: 'kids#show_by_family_key'
